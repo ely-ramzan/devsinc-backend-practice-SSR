@@ -1,26 +1,25 @@
-const express = require("express");
-const dotenv = require("dotenv");
-const { connectToMongoDb } = require("./src/utils/dbConnections");
-const authRouter = require("./src/routes/authRoutes");
+import express from "express";
 
-dotenv.config();
+import { connectToMongoDb } from "./src/db/dbConnections.js";
+import authRouter from "./src/routes/authRoutes.js";
+import { errorHandler } from "./src/middlewares/errorHandler.js";
+import { url, port } from "./src/configs/envConfig.js";
+
 const app = express();
 
 app.use(express.json());
-app.use("/api/auth",authRouter);
-
+app.use("/api/auth", authRouter);
+app.use(errorHandler);
 
 (async () => {
-    try {
-        const url = process.env.MONGO_URI;
-        await connectToMongoDb(url);
-        console.log("Mongo db has been connected");
-        
-        const port = process.env.PORT || 3000;
-        app.listen(port,() => {
-            console.log(`Server is listening on port ${port}`);
-        })
-    } catch (err) {
-        console.error(`${err}: in connection`);
-    }
+  try {
+    await connectToMongoDb(url);
+    console.log("Mongo db has been connected");
+
+    app.listen(port, () => {
+      console.log(`Server is listening on port ${port}`);
+    });
+  } catch (err) {
+    console.error(`${err}: in connection`);
+  }
 })();

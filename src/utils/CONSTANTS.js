@@ -1,4 +1,4 @@
-module.exports = {
+export const subCategoryDefault = {
   expense: [
     "groceries", "rent", "transport", "entertainment", "utilities",
     "healthcare", "education", "subscriptions", "dining out",
