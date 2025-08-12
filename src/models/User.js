@@ -1,5 +1,7 @@
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
+import UserSubCategory from "./UserSubCategory.js";
+import { generateSubCategories } from "../utils/CONSTANTS.js";
 
 const userSchema = mongoose.Schema(
   {
@@ -42,5 +44,20 @@ userSchema.pre("save", async function (next) {
 userSchema.methods.matchPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
+
+userSchema.post("save", async function (doc) {
+  try {
+    const subCats = await UserSubCategory.find({ owner: doc._id });
+    if (subCats.length !== 0) {
+      console.log("User already have subcats", subCats);
+      return;
+    }
+    const subCatsToInsert = generateSubCategories(doc._id);
+    await UserSubCategory.insertMany(subCatsToInsert);
+    console.log("User sub cats created");
+  } catch (err) {
+    throw new Error("Failed to seed sub-cats", err);
+  }
+});
 
 export default mongoose.model("User", userSchema);

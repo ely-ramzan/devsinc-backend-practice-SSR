@@ -4,7 +4,8 @@ const subCategorySchema = mongoose.Schema({
     name: {
         type: String,
         required: true,
-        trim: true
+        trim: true,
+        index: true
     },
     category: {
         type: String,
@@ -17,4 +18,4 @@ const subCategorySchema = mongoose.Schema({
     }
 })
 
-export default mongoose.model("Subcategory", subcategorySchema);
+export default mongoose.model("Subcategory", subCategorySchema);

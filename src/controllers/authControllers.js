@@ -1,4 +1,4 @@
-import { signupUser, loginUser } from "../services/authServices.js";
+import { signupUser, loginUser } from "../services/authService.js";
 
 export const signupHandler = async (req, res, next) => {
   try {
