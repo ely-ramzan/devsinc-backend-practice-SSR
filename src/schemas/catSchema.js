@@ -21,7 +21,7 @@ export const catSchema = z.object({
 
 
 export const catQueryParams = z.object({
-    id: z.string().trim().optional(),
+    id: z.uuid(),
     category: categoryEnum.optional(),
     name: z.string().trim().optional(),
 }).partial();

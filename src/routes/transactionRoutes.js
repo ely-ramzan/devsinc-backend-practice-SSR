@@ -20,6 +20,7 @@ transactionRouter.post(
   validateMiddleware(transactionSchema),
   handleCreateTransaction
 );
+
 transactionRouter.get("/me", handleGetTransactionsByUser);
 
 transactionRouter.get(
@@ -27,6 +28,7 @@ transactionRouter.get(
   validateQueryParams(transactionQuerySchema),
   handleGetTransactionDynamically
 );
+
 transactionRouter.delete("/:id", handleDeleteTransactionById);
 
 transactionRouter.patch(

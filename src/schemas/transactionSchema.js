@@ -12,7 +12,6 @@ export const transactionSchema = z.object({
     .string()
     .trim()
     .toLowerCase()
-    .transform((val) => val.normalize())
     .refine((val) => categoryEnum.options.includes(val), {
       message: "Category must be either 'expense' or 'income'",
     }),
@@ -20,8 +19,7 @@ export const transactionSchema = z.object({
     .string()
     .trim()
     .min(2, { message: "SubCategory should have a proper name" })
-    .toLowerCase()
-    .transform((val) => val.normalize()),
+    .toLowerCase(),
   amount: z
     .number({ invalid_type_error: "Amount must be a number" })
     .min(0, { message: "Amount can't be less than 0" }),
@@ -39,7 +37,7 @@ export const updateTransactionSchema = transactionSchema.partial();
 
 export const transactionQuerySchema = z
   .object({
-    id: z.string().trim().optional(),
+    _id: z.string().trim().optional(),
     category: categoryEnum.optional(),
     subCategory: z.string().trim().optional(),
     date: dateStringToDate.optional(),

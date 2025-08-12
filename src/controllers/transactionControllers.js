@@ -7,11 +7,11 @@ import {
 } from "../services/transactionService.js";
 
 const handleCreateTransaction = async (req, res, next) => {
-  const { category, subcategory, amount, notes, date } = req.body;
+  const { category, subCategory, amount, notes, date } = req.body;
   const userId = req.user._id;
   const transactionObject = {
     category,
-    subcategory,
+    subCategory,
     amount,
     notes,
     date,
@@ -57,6 +57,7 @@ const handleDeleteTransactionById = async (req, res) => {
 
 const handleUpdateTransactionById = async (req, res) => {
     try {
+      console.log(req.body);
         const tId = req.params.id;
         const obj = req.body;
         const result = await updateTransactionById(tId,obj);

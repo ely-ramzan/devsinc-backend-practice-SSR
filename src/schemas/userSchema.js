@@ -1,14 +1,14 @@
-import { z } from "zod";
+import { email, z } from "zod";
 
 export const updateUserSchema = z
   .object({
     firstName: z
       .string()
-      .min(3, { message: "First Name should have atleast 3 letters" })
+      .min(3, { message: "First Name should have at least 3 letters" })
       .optional(),
     lastName: z
       .string()
-      .min(3, { message: "First Name should have atleast 3 letters" })
+      .min(3, { message: "Last Name should have at least 3 letters" })
       .optional(),
     password: z
       .string()
@@ -27,5 +27,6 @@ export const updateUserSchema = z
         message: "Password must contain at least one special character",
       })
       .optional(),
+      email: z.never()
   })
   .partial();

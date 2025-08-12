@@ -4,11 +4,11 @@ import UserSubCategory from "./UserSubCategory.js";
 const transactionSchema = mongoose.Schema({
   category: {
     type: String,
-    required: true,
+    required: true
   },
   subCategory: {
     type: String,
-    required: true,
+    required : true
   },
   amount: {
     type: Number,
@@ -40,13 +40,11 @@ transactionSchema.pre("save", async function (next) {
       throw new Error("Category should be either income or expense");
     }
 
-    const subCatExists = await UserSubCategory.findOne(
-      await UserSubCategory.findOne({
+    const subCatExists = await UserSubCategory.findOne({
         name: this.subCategory,
         owner: this.user,
         category: this.category,
-      })
-    );
+      });
 
     if (subCatExists) {
       next();

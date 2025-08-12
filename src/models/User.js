@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 import UserSubCategory from "./UserSubCategory.js";
-import { generateSubCategories } from "../utils/CONSTANTS.js";
+import { generateSubCategories } from "../utils/constants.js";
 
 const userSchema = mongoose.Schema(
   {
@@ -24,6 +24,10 @@ const userSchema = mongoose.Schema(
       type: String,
       required: true,
     },
+    isVerified: {
+      type: Boolean,
+      default:false
+    }
   },
   { timestamps: true }
 );

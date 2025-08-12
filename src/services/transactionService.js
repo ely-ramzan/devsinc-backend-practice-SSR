@@ -32,6 +32,7 @@ export const deleteTransactionById = async (tId) => {
   };
 };
 
+// user: id should 
 export const updateTransactionById = async (tId, obj) => {
   const updatedTransaction = await Transaction.findByIdAndUpdate(tId, obj, {
     new: true,

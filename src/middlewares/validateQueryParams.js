@@ -2,11 +2,16 @@ import { safeParse } from "zod";
 
 export const validateQueryParams = (schema) => (req, res, next) => {
   try {
-    const result = schema.safeParse(req.query);
-    req.validatedQuery = result.success ? result.date : {};
-    if (req.validatedQuery == {} || !req.validatedQuery) {
-      throw new Error("no query params");
+    if (!req.query || Object.keys(req.query).length === 0) {
+      throw new Error("No query parameters provided");
     }
+
+    const result = schema.safeParse(req.query);
+    if (!result.success) {
+      throw new Error({ error: result.error.errors });
+    }
+
+    req.validatedQuery = result.data;
     next();
   } catch (err) {
     next(err);
