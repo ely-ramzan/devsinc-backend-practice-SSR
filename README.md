@@ -2,4 +2,4 @@
 
 # todo: eslint prettier - todos ::::> search: pagination sorting filtering chartjs
 
-# react zustand tanstack-react-query axios shadcn 
+# react zustand tanstack-react-query axios shadcn

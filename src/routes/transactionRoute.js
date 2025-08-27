@@ -5,12 +5,13 @@ import {
   handleGetTransactionDynamically,
   handleDeleteTransactionById,
   handleUpdateTransactionById,
-} from "../controllers/transactionControllers.js";
+} from "../controllers/transactionController.js";
 import { validateMiddleware } from "../middlewares/validateMiddleWare.js";
 import {
   transactionQuerySchema,
   transactionSchema,
   updateTransactionSchema,
+  transactionListQuerySchema
 } from "../schemas/transactionSchema.js";
 import { validateQueryParams } from "../middlewares/validateQueryParams.js";
 const transactionRouter = express.Router();
@@ -21,7 +22,7 @@ transactionRouter.post(
   handleCreateTransaction
 );
 
-transactionRouter.get("/me", handleGetTransactionsByUser);
+transactionRouter.get("/me", validateQueryParams(transactionListQuerySchema), handleGetTransactionsByUser);
 
 transactionRouter.get(
   "/",

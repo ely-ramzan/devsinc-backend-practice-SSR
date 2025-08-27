@@ -49,18 +49,25 @@ userSchema.methods.matchPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
 
-userSchema.post("save", async function (doc) {
+userSchema.post("save", async function (doc, next) { 
+  const isNewUser = this.isNew;
+  if (!isNewUser) {
+    return next();
+  }
+
   try {
+
     const subCats = await UserSubCategory.find({ owner: doc._id });
-    if (subCats.length !== 0) {
-      console.log("User already have subcats", subCats);
-      return;
+    if (subCats.length > 0) {
+      return next();
     }
     const subCatsToInsert = generateSubCategories(doc._id);
     await UserSubCategory.insertMany(subCatsToInsert);
-    console.log("User sub cats created");
+    console.log("Default user sub-categories created");
+    next();
   } catch (err) {
-    throw new Error("Failed to seed sub-cats", err);
+    console.error("Failed to seed sub-categories for new user:", err);
+    next(new Error("Failed to seed sub-cats"));
   }
 });
 

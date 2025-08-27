@@ -36,7 +36,9 @@ const handleGetAllCategoriesByUser = async (req, res, next) => {
 
 const handleGetCategoriesDynamically = async (req, res, next) => {
   try {
+    const userId = req.user._id;
     const filter = req.validatedQuery;
+    filter["owner"] = userId;
     const result = await getCategoriesDynamically(filter);
     return res.status(200).json(result);
   } catch (err) {

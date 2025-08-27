@@ -12,7 +12,7 @@ export const signupUser = async (email, password) => {
   }
 
   const newUser = await User.create({ email, password });
-
+  await singUpVerification(newUser._id,newUser.email);
   return {
     message: "User created successfully",
     email: newUser.email,

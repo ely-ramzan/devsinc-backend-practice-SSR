@@ -28,8 +28,9 @@ const transactionSchema = mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
-  },
-});
+  }
+},{ timestamps: true });
+
 
 transactionSchema.pre("save", async function (next) {
   try {
@@ -41,21 +42,23 @@ transactionSchema.pre("save", async function (next) {
     }
 
     const subCatExists = await UserSubCategory.findOne({
-        name: this.subCategory,
-        owner: this.user,
-        category: this.category,
-      });
-
-    if (subCatExists) {
-      next();
-    }
-    const subcat = await UserSubCategory.create({
       name: this.subCategory,
-      category: this.category,
       owner: this.user,
+      category: this.category,
     });
-    console.log("sub cat inserted", subcat);
-    next();
+
+    
+    if (subCatExists) {
+      return next(); 
+    } else {
+      await UserSubCategory.create({
+        name: this.subCategory,
+        category: this.category,
+        owner: this.user,
+      });
+      console.log(`New sub-category inserted: "${this.subCategory}"`);
+      return next(); 
+    }
   } catch (err) {
     return next(err);
   }

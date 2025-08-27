@@ -43,3 +43,19 @@ export const transactionQuerySchema = z
     date: dateStringToDate.optional(),
   })
   .partial();
+
+
+  export const transactionListQuerySchema = z.object({
+  // Filtering
+  category: z.enum(["expense", "income"]).optional(),
+  subCategory: z.string().trim().optional(),
+
+  // Pagination
+  page: z.string().transform(Number).optional().default("1"),
+  limit: z.string().transform(Number).optional().default("10"),
+
+  // Sorting
+  sortBy: z.string().optional().default("date"), // Default sort field
+  sortOrder: z.enum(["asc", "desc"]).optional().default("desc"), // Default sort order
+});
+  

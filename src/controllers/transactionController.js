@@ -3,7 +3,7 @@ import {
   getTransactionsByUser,
   getTransactionDynamically,
   deleteTransactionById,
-  updateTransactionById
+  updateTransactionById,
 } from "../services/transactionService.js";
 
 const handleCreateTransaction = async (req, res, next) => {
@@ -15,7 +15,7 @@ const handleCreateTransaction = async (req, res, next) => {
     amount,
     notes,
     date,
-    user:userId,
+    user: userId,
   };
   try {
     const result = await createTransaction(transactionObject);
@@ -28,7 +28,9 @@ const handleCreateTransaction = async (req, res, next) => {
 const handleGetTransactionsByUser = async (req, res, next) => {
   try {
     const userId = req.user._id;
-    const result = await getTransactionsByUser(userId);
+    const options = req.validatedQuery;
+
+    const result = await getTransactionsByUser(userId, options);
     return res.status(200).json(result);
   } catch (err) {
     next(err);
@@ -38,6 +40,7 @@ const handleGetTransactionsByUser = async (req, res, next) => {
 const handleGetTransactionDynamically = async (req, res) => {
   try {
     const filter = req.validatedQuery;
+    console.log(filter);
     const result = await getTransactionDynamically(filter);
     return res.status(200).json(result);
   } catch (err) {
@@ -55,18 +58,18 @@ const handleDeleteTransactionById = async (req, res) => {
   }
 };
 
-const handleUpdateTransactionById = async (req, res) => {
-    try {
-      console.log(req.body);
-        const tId = req.params.id;
-        const obj = req.body;
-        const result = await updateTransactionById(tId,obj);
-        return res.status(200).json(result);
-    } catch (err) {
-        next(err);
-    }
-};
+const handleUpdateTransactionById = async (req, res, next) => {
+  try {
+    const tId = req.params.id;
+    const obj = req.body;
+    const userId = req.user._id; 
 
+    const result = await updateTransactionById(tId, obj, userId);
+    return res.status(200).json(result);
+  } catch (err) {
+    next(err); 
+  }
+};
 export {
   handleCreateTransaction,
   handleGetTransactionsByUser,
