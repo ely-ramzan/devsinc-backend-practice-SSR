@@ -7,25 +7,36 @@ import transactionRouter from "./src/routes/transactionRoute.js";
 import catRouter from "./src/routes/catRoute.js";
 import userRouter from "./src/routes/userRoute.js";
 import { authMiddleware } from "./src/middlewares/authMiddleware.js";
-import verifyRouter from "./src/routes/verifyRoute.js";
-import cors  from "cors";
+import cors from "cors";
 import analyticsRoutes from "./src/routes/chartRoute.js";
 import reportRouter from "./src/routes/reportRoute.js";
+import passwordRouter from "./src/routes/passwordRoute.js";
 
 const app = express();
-app.use(cors());
+
+app.use(cors({
+  origin: ["http://localhost:5173"],
+  // credentials: true,
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+}));
+
+
 
 app.use(express.json());
+
+
 app.use("/api/auth", authRouter);
 app.use("/api/transactions", authMiddleware, transactionRouter);
 app.use("/api/subCategories", authMiddleware, catRouter);
 app.use("/api/user/me", authMiddleware, userRouter);
-app.use("/verify",verifyRouter);
 app.use("/api/charts", authMiddleware, analyticsRoutes);
-app.use("/api/reports", authMiddleware, reportRouter); 
+app.use("/api/reports", authMiddleware, reportRouter);
+app.use("/api/password", passwordRouter);
 
 
 app.use(errorHandler);
+
 
 (async () => {
   try {

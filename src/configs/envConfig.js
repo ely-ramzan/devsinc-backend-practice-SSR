@@ -8,7 +8,10 @@ const config = {
     port: process.env.PORT || 3000,
     privateKey: process.env.JWT_KEY,
     smtpUser: process.env.SMTP_USER,
-    smtpPass: process.env.SMTP_PASS
+    smtpPass: process.env.SMTP_PASS,
+    smtpHost: process.env.SMTP_HOST,
+    smtpPort: process.env.SMTP_PORT,
+    clientUrl: process.env.CLIENT_URL
 }
 
 const configSchema = z.object({
@@ -17,7 +20,10 @@ const configSchema = z.object({
     port: z.string().optional(),
     privateKey: z.string().min(9),
     smtpUser: z.string("Invalid email address"),
-    smtpPass: z.string().min(8,{message: "Must be atleast 8 charachters long"})
+    smtpPass: z.string().min(8,{message: "Must be atleast 8 charachters long"}),
+    smtpHost : z.string(),
+    smtpPort: z.string(),
+    clientUrl: z.string()
 })
 
 const parsedConfig = configSchema.parse(config)

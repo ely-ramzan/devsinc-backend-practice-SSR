@@ -1,9 +1,8 @@
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
-import UserSubCategory from "./UserSubCategory.js";
-import { generateSubCategories } from "../utils/constants.js";
+import crypto from "crypto";
 
-const userSchema = mongoose.Schema(
+const userSchema = new mongoose.Schema(
   {
     firstName: {
       type: String,
@@ -17,8 +16,7 @@ const userSchema = mongoose.Schema(
       type: String,
       required: true,
       unique: true,
-      trim: true,
-      lower: true,
+      lowercase: true,
     },
     password: {
       type: String,
@@ -26,8 +24,12 @@ const userSchema = mongoose.Schema(
     },
     isVerified: {
       type: Boolean,
-      default:false
-    }
+      default: false,
+    },
+    emailVerificationToken: String,
+    emailVerificationTokenExpires: Date,
+    passwordResetToken: String,
+    passwordResetTokenExpires: Date,
   },
   { timestamps: true }
 );
@@ -36,39 +38,40 @@ userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) {
     return next();
   }
-  try {
-    const hashedPassword = await bcrypt.hash(this.password, 10);
-    this.password = hashedPassword;
-    next();
-  } catch (err) {
-    next(err);
-  }
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
+  next();
 });
 
 userSchema.methods.matchPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
 
-userSchema.post("save", async function (doc, next) { 
-  const isNewUser = this.isNew;
-  if (!isNewUser) {
-    return next();
-  }
+userSchema.methods.generateEmailVerificationToken = function () {
+  const verificationToken = crypto.randomBytes(32).toString("hex");
 
-  try {
+  this.emailVerificationToken = crypto
+    .createHash("sha256")
+    .update(verificationToken)
+    .digest("hex");
 
-    const subCats = await UserSubCategory.find({ owner: doc._id });
-    if (subCats.length > 0) {
-      return next();
-    }
-    const subCatsToInsert = generateSubCategories(doc._id);
-    await UserSubCategory.insertMany(subCatsToInsert);
-    console.log("Default user sub-categories created");
-    next();
-  } catch (err) {
-    console.error("Failed to seed sub-categories for new user:", err);
-    next(new Error("Failed to seed sub-cats"));
-  }
-});
+  this.emailVerificationTokenExpires = Date.now() + 15 * 60 * 1000; // 15 minutes
 
-export default mongoose.model("User", userSchema);
+  return verificationToken;
+};
+
+userSchema.methods.generatePasswordResetToken = function () {
+  const resetToken = crypto.randomBytes(32).toString("hex");
+
+  this.passwordResetToken = crypto
+    .createHash("sha256")
+    .update(resetToken)
+    .digest("hex");
+
+  this.passwordResetTokenExpires = Date.now() + 10 * 60 * 1000; // 10 minutes
+
+  return resetToken;
+};
+
+const User = mongoose.model("User", userSchema);
+export default User;
